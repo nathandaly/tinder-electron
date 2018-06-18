@@ -1,17 +1,17 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Icon, Menu } from 'semantic-ui-react'
+import { Icon, Menu } from 'semantic-ui-react';
 
 type Props = {};
 
 class Navigation extends Component<Props> {
-  state = { activeItem: 'users' }
+  state = { activeItem: 'users' };
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
-    const { activeItem } = this.state
+    const { activeItem } = this.state;
     const menuItems = {
       users: {
         icon: 'fire',
@@ -21,22 +21,22 @@ class Navigation extends Component<Props> {
       bulk: {
         icon: 'users',
         color: 'orange',
-        link: '/'
+        link: '/batchgit status'
       },
       messages: {
         icon: 'chat',
-        color: 'pink',
+        color: 'blue',
         link: '/'
       },
       settings: {
         icon: 'setting',
-        color: 'green',
+        color: 'grey',
         link: '/'
       }
-    }
+    };
 
     return (
-      <Menu fixed='bottom' icon='labeled' widths={4}>
+      <Menu fixed="bottom" icon="labeled" widths={4}>
         {Object.keys(menuItems).map(item => (
           <Menu.Item
             name={item}
@@ -50,8 +50,8 @@ class Navigation extends Component<Props> {
           </Menu.Item>
         ))}
       </Menu>
-    )
+    );
   }
 }
 
-export default Navigation
+export default Navigation;
