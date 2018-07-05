@@ -202,10 +202,12 @@
   "dependencies": {
     "devtron": "^1.4.0",
     "electron-debug": "^1.5.0",
+    "fb": "^2.0.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-facebook-login": "^4.0.1",
     "react-hot-loader": "^4.2.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
@@ -213,6 +215,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
+    "request": "^2.87.0",
     "semantic-ui-css": "^2.3.1",
     "semantic-ui-react": "^0.81.1",
     "source-map-support": "^0.5.6"

@@ -254,6 +254,7 @@ export default merge.smart(baseConfig, {
     port,
     publicPath,
     compress: true,
+    allowedHosts: ['localhost', 'tinder-desktop.ngrok.io'],
     noInfo: true,
     stats: 'errors-only',
     inline: true,

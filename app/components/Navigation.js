@@ -21,7 +21,7 @@ class Navigation extends Component<Props> {
       bulk: {
         icon: 'users',
         color: 'orange',
-        link: '/batchgit status'
+        link: '/batch'
       },
       messages: {
         icon: 'chat',
