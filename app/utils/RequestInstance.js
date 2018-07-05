@@ -1,5 +1,6 @@
 import request from 'request';
 
+// TODO: Get the state here with the API token and append it to the headers.
 export default request.defaults({
   baseUrl: 'https://api.gotinder.com',
   headers: {

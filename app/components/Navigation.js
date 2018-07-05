@@ -16,7 +16,7 @@ class Navigation extends Component<Props> {
       users: {
         icon: 'fire',
         color: 'red',
-        link: '/'
+        link: '/home'
       },
       bulk: {
         icon: 'users',
@@ -26,7 +26,7 @@ class Navigation extends Component<Props> {
       messages: {
         icon: 'chat',
         color: 'blue',
-        link: '/'
+        link: '/matches'
       },
       settings: {
         icon: 'setting',
