@@ -4,13 +4,15 @@ import { Switch, Route } from 'react-router';
 import App from './containers/App';
 import HomePage from './containers/HomePage';
 import BatchPage from './containers/BatchPage';
+import MatchesPage from './containers/MatchesPage';
 import Authentication from './containers/Authentication';
 
 export default () => (
   <App>
     <Switch>
-      <Route path="/batch" component={BatchPage} />
       <Route path="/home" component={HomePage} />
+      <Route path="/batch" component={BatchPage} />
+      <Route path="/matches" component={MatchesPage} />
       <Route path="/" component={Authentication} />
     </Switch>
   </App>

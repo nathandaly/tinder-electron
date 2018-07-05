@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { ipcRenderer } from 'electron';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
@@ -43,6 +44,24 @@ const configureStore = (initialState?: counterStateType) => {
       })
     : compose;
   /* eslint-enable no-underscore-dangle */
+
+  /**
+   * Send a signal to close the authentication window if
+   * tinder has authenticated successfully.
+   * @param store
+   * @returns {function(*): Function}
+   */
+  const authentication = store => next => action => {
+    console.log('actions', action);
+    if (action.type === 'AUTHENTICATION_FINISHED' && !action.error) {
+      console.log(store.getState());
+      ipcRenderer.send('authentication-finished');
+    }
+
+    next(action);
+  };
+
+  middleware.push(authentication);
 
   // Apply Middleware & Compose Enhancers
   enhancers.push(applyMiddleware(...middleware));

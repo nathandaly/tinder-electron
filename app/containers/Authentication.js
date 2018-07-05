@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { ipcRenderer } from 'electron';
 import { connect } from 'react-redux';
-import { Message } from 'semantic-ui-react';
+import { Message, Grid, Image } from 'semantic-ui-react';
 import FacebookAuthButton from '../components/FacebookLoginButton';
 import tinderAuthAction from '../actions/TinderAuthentication';
 
@@ -46,7 +46,20 @@ class SingleSignOn extends Component {
     return (
       <div>
         {errMessage}
-        <FacebookAuthButton signInAction={() => this.loginWithFacebook()} />
+        <Grid centered padded>
+          <Grid.Row padded="vertically" />
+          <Grid.Row padded="vertically" />
+          <Grid.Row padded="vertically" />
+          <Grid.Row centered>
+            <Image src="../resources/images/logo-zoomed.png" />
+          </Grid.Row>
+          <Grid.Row padded="vertically" />
+          <Grid.Row padded="vertically" />
+          <Grid.Row padded="vertically" />
+          <Grid.Row centered>
+            <FacebookAuthButton signInAction={() => this.loginWithFacebook()} />
+          </Grid.Row>
+        </Grid>
       </div>
     );
   }

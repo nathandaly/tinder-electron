@@ -91,22 +91,26 @@ app.on('ready', async () => {
     mainWindow = null;
   });
 
+  const authWindow = new BrowserWindow({
+    frame: true,
+    parent: mainWindow,
+    webPreferences: { nodeIntegration: false },
+    show: false
+  });
+
   // Code to create fb authentication window
   ipcMain.on('auth-component-did-mount', () => {
+    console.log('event', 'auth-component-did-mount');
+
     ipcMain.on('fb-authenticate', () => {
+      console.log('event', 'fb-authenticate');
+
       const options = {
         client_id: '464891386855067',
         redirect_uri: 'https://tinder.com',
         scope:
           'user_birthday,user_photos,user_education_history,email,user_relationship_details,user_friends,user_work_history,user_likes'
       };
-
-      const authWindow = new BrowserWindow({
-        frame: true,
-        alwaysOnTop: true,
-        parent: mainWindow,
-        webPreferences: { nodeIntegration: false }
-      });
 
       const facebookAuthURL = `https://www.facebook.com/v2.6/dialog/oauth?redirect_uri=${
         options.redirect_uri
@@ -121,9 +125,10 @@ app.on('ready', async () => {
       authWindow.webContents.on(
         'did-get-redirect-request',
         (event, oldUrl, newUrl) => {
-          authWindow.destroy();
+          console.log('event', 'did-get-redirect-request', newUrl);
           const rawCode = /access_token=([^&]*)/.exec(newUrl) || null;
           const accessToken = rawCode && rawCode.length > 1 ? rawCode[1] : null;
+          console.log('accessToken', accessToken);
           const error = /\?error=(.+)$/.exec(newUrl);
           console.log(error);
 
@@ -136,6 +141,10 @@ app.on('ready', async () => {
         }
       );
     });
+  });
+
+  ipcMain.on('authentication-finished', () => {
+    authWindow.destroy();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
