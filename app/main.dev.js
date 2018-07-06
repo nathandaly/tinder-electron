@@ -129,10 +129,9 @@ app.on('ready', async () => {
           const rawCode = /access_token=([^&]*)/.exec(newUrl) || null;
           const accessToken = rawCode && rawCode.length > 1 ? rawCode[1] : null;
           console.log('accessToken', accessToken);
-          const error = /\?error=(.+)$/.exec(newUrl);
-          console.log(error);
 
           if (accessToken !== null) {
+            authWindow.close();
             mainWindow.webContents.send('facebook-auth-is-success', {
               facebook_id: options.client_id,
               facebook_token: accessToken
@@ -141,10 +140,6 @@ app.on('ready', async () => {
         }
       );
     });
-  });
-
-  ipcMain.on('authentication-finished', () => {
-    authWindow.destroy();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);

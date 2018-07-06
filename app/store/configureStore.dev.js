@@ -51,8 +51,7 @@ const configureStore = (initialState?: counterStateType) => {
    * @param store
    * @returns {function(*): Function}
    */
-  const authentication = store => next => action => {
-    console.log('actions', action);
+  const authenticationMiddleware = store => next => action => {
     if (action.type === 'AUTHENTICATION_FINISHED' && !action.error) {
       console.log(store.getState());
       ipcRenderer.send('authentication-finished');
@@ -61,7 +60,7 @@ const configureStore = (initialState?: counterStateType) => {
     next(action);
   };
 
-  middleware.push(authentication);
+  middleware.push(authenticationMiddleware);
 
   // Apply Middleware & Compose Enhancers
   enhancers.push(applyMiddleware(...middleware));

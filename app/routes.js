@@ -10,9 +10,9 @@ import Authentication from './containers/Authentication';
 export default () => (
   <App>
     <Switch>
-      <Route path="/home" component={HomePage} />
-      <Route path="/batch" component={BatchPage} />
       <Route path="/matches" component={MatchesPage} />
+      <Route path="/batch" component={BatchPage} />
+      <Route path="/home" component={HomePage} />
       <Route path="/" component={Authentication} />
     </Switch>
   </App>
