@@ -14,24 +14,28 @@ class Navigation extends Component<Props> {
     const { activeItem } = this.state;
     const menuItems = {
       users: {
+        id: 'home',
         icon: 'fire',
         color: 'red',
         link: '/home'
       },
       bulk: {
+        id: 'batch',
         icon: 'users',
         color: 'orange',
         link: '/batch'
       },
       messages: {
+        id: 'matches',
         icon: 'chat',
         color: 'blue',
         link: '/matches'
       },
       settings: {
+        id: 'setting',
         icon: 'setting',
         color: 'grey',
-        link: '/'
+        link: '/setting'
       }
     };
 
@@ -39,6 +43,7 @@ class Navigation extends Component<Props> {
       <Menu fixed="bottom" icon="labeled" widths={4}>
         {Object.keys(menuItems).map(item => (
           <Menu.Item
+            key={item.id}
             name={item}
             active={activeItem === item}
             onClick={this.handleItemClick}
