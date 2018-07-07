@@ -186,6 +186,6 @@ MatchesPage.propTypes = {
  * @param state
  * @returns {{}}
  */
-const mapStateToProps = ({ authentication }) => authentication;
+const mapStateToProps = ({ authentication }) => ({ authentication });
 
 export default connect(mapStateToProps, {})(MatchesPage);
