@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { List, message, Avatar, Spin } from 'antd';
@@ -9,6 +10,7 @@ import {
   VList,
   InfiniteLoader
 } from 'react-virtualized';
+import fetchUserMatches from '../actions/UserMatches';
 import baseRequest from '../utils/RequestInstance';
 
 class MatchesPage extends Component {
@@ -19,10 +21,13 @@ class MatchesPage extends Component {
 
   componentDidMount() {
     console.log('COMPONENT MOUNTED');
-    this.getData(res => {
-      this.setState({
-        data: res.results
-      });
+
+    this.props.fetchUserMatches(null, hasError => {
+      if (!hasError) {
+        this.setState({
+          data: this.props.matches
+        });
+      }
     });
   }
 
@@ -171,11 +176,19 @@ class MatchesPage extends Component {
 }
 
 MatchesPage.defaultProps = {
-  authentication: {}
+  authentication: {},
+  fetchUserMatches: {},
+  matches: {}
 };
 
 MatchesPage.propTypes = {
   authentication: PropTypes.shape({
+    payload: PropTypes.shape({
+      token: PropTypes.string
+    })
+  }),
+  fetchUserMatches: PropTypes.func,
+  matches: PropTypes.shape({
     payload: PropTypes.shape({
       token: PropTypes.string
     })
@@ -186,6 +199,21 @@ MatchesPage.propTypes = {
  * @param state
  * @returns {{}}
  */
-const mapStateToProps = ({ authentication }) => ({ authentication });
+const mapStateToProps = ({ authentication, matches }) => ({
+  authentication,
+  matches
+});
 
-export default connect(mapStateToProps, {})(MatchesPage);
+/**
+ * @param dispatch
+ * @return {{signUpAction: *}|B|N}
+ */
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      fetchUserMatches
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(MatchesPage);

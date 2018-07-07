@@ -1,4 +1,5 @@
 import baseRequest from '../utils/RequestInstance';
+import { configureStore } from '../store/configureStore';
 
 import {
   USER_MATCHES_STARTED,
@@ -13,6 +14,8 @@ import {
  * @return {function(*)}
  */
 export default (id = null, hasError) => dispatch => {
+  const store = configureStore();
+  console.log('authentication', store.getState().authentication);
   dispatch({ type: USER_MATCHES_STARTED });
 
   let endpoint = '/user/matches';
@@ -23,9 +26,13 @@ export default (id = null, hasError) => dispatch => {
 
   baseRequest.get(
     {
-      url: endpoint
+      url: endpoint,
+      headers: {
+        'X-Auth-Token': store.getState().payload.token
+      }
     },
     (error, httpResponse, body) => {
+      console.log([error, httpResponse, body]);
       const bodyObject = JSON.parse(body);
 
       if (error !== null || httpResponse.statusCode !== 200) {
