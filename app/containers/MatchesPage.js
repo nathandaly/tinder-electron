@@ -21,6 +21,7 @@ class MatchesPage extends Component {
 
   componentDidMount() {
     console.log('COMPONENT MOUNTED');
+    console.log(this.props);
 
     this.props.fetchUserMatches(null, hasError => {
       if (!hasError) {

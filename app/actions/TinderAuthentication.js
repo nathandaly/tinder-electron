@@ -44,6 +44,8 @@ export default (tokenData, hasError) => dispatch => {
         return;
       }
 
+      localStorage.setItem('auth-token', bodyObject.token);
+
       dispatch({
         type: AUTHENTICATION_FINISHED,
         payload: bodyObject,

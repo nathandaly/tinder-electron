@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, session } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -76,6 +76,14 @@ app.on('ready', async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  // Set user agent.
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    const detailsClone = details;
+    detailsClone.requestHeaders['User-Agent'] =
+      'Tinder/9.2.0 (iPhone; iOS 11.4; Scale/3.00)';
+    callback({ cancel: false, requestHeaders: detailsClone.requestHeaders });
+  });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
