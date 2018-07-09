@@ -30,7 +30,7 @@ class App extends React.Component<Props> {
     }
 
     return (
-      <Container textAlign="center" fluid>
+      <Container fluid>
         {loader}
         <div>{this.props.children}</div>
         {navigation}

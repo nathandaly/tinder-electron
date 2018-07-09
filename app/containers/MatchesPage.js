@@ -3,15 +3,14 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { List, message, Avatar, Spin } from 'antd';
-import {
-  WindowScroller,
-  AutoSizer,
-  VList,
-  InfiniteLoader
-} from 'react-virtualized';
+import { List, Avatar, Spin } from 'antd';
+
+import WindowScroller from 'react-virtualized/dist/commonjs/WindowScroller';
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
+import VList from 'react-virtualized/dist/commonjs/List';
+import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
+
 import fetchUserMatches from '../actions/UserMatches';
-import baseRequest from '../utils/RequestInstance';
 
 class MatchesPage extends Component {
   state = {
@@ -20,36 +19,24 @@ class MatchesPage extends Component {
   };
 
   componentDidMount() {
-    console.log('COMPONENT MOUNTED');
-    console.log(this.props);
-
-    this.props.fetchUserMatches(null, hasError => {
-      if (!hasError) {
-        this.setState({
-          data: this.props.matches
-        });
-      }
+    this.getData(response => {
+      console.log('matches', response.matches);
+      const matches = response.matches.slice().reverse();
+      this.setState({
+        data: matches
+      });
     });
   }
 
   loadedRowsMap = {};
 
   getData = callback => {
-    console.log('token', this.props.authentication.payload.token);
-    baseRequest.get(
-      {
-        url: '/user/matches',
-        headers: {
-          'X-Auth-Token': this.props.authentication.payload.token
-        }
-      },
-      (error, httpResponse, body) => {
-        console.log([error, httpResponse, body]);
-        if (!error && httpResponse.statusCode === 200) {
-          callback(body);
-        }
+    this.props.fetchUserMatches(null, hasError => {
+      if (!hasError) {
+        console.log(this.props.matches.payload.matches[0]);
+        callback(this.props.matches.payload);
       }
-    );
+    });
   };
 
   handleInfiniteOnLoad = ({ startIndex, stopIndex }) => {
@@ -64,8 +51,7 @@ class MatchesPage extends Component {
       this.loadedRowsMap[i] = 1;
     }
 
-    if (data.length > 19) {
-      message.warning('Virtualized List loaded all');
+    if (data.length > 100) {
       this.setState({
         loading: false
       });
@@ -73,9 +59,17 @@ class MatchesPage extends Component {
     }
 
     this.getData(res => {
-      data = data.concat(res.results);
+      const matches = res.data.matches.slice().reverse();
       this.setState({
-        data,
+        data: matches
+      });
+    });
+
+    this.getData(response => {
+      data = data.concat(response.data.matches);
+      const matches = data.slice().reverse();
+      this.setState({
+        data: matches,
         loading: false
       });
     });
@@ -87,22 +81,40 @@ class MatchesPage extends Component {
     const { data } = this.state;
     const item = data[index];
 
+    let messageString = '';
+
+    if (item.messages.length > 0) {
+      messageString = item.messages[item.messages.length - 1].message;
+    }
+
+    const avatar = item.person.photos;
+
     return (
-      <List.Item key={key} style={style}>
-        <List.Item.Meta
-          avatar={
-            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          }
-          title={<a href="https://ant.design">{item.name.last}</a>}
-          description={item.email}
-        />
-        <div>Content</div>
-      </List.Item>
+      <a href="https://ant.design">
+        <List.Item key={key} style={style} as="link">
+          <List.Item.Meta
+            avatar={
+              <Avatar
+                shape="circle"
+                size="large"
+                src={
+                  avatar[avatar.length - 1].processedFiles[
+                    avatar[avatar.length - 1].processedFiles.length - 1
+                  ].url
+                }
+              />
+            }
+            title={item.person.name}
+            description={messageString}
+          />
+        </List.Item>
+      </a>
     );
   };
 
   render() {
     const { data } = this.state;
+
     const vlist = ({
       height,
       isScrolling,
@@ -125,6 +137,7 @@ class MatchesPage extends Component {
         width={width}
       />
     );
+
     const autoSize = ({
       height,
       isScrolling,
@@ -145,6 +158,7 @@ class MatchesPage extends Component {
         }
       </AutoSizer>
     );
+
     const infiniteLoader = ({
       height,
       isScrolling,
@@ -167,6 +181,7 @@ class MatchesPage extends Component {
         }
       </InfiniteLoader>
     );
+
     return (
       <List>
         {data.length > 0 && <WindowScroller>{infiniteLoader}</WindowScroller>}
@@ -177,21 +192,15 @@ class MatchesPage extends Component {
 }
 
 MatchesPage.defaultProps = {
-  authentication: {},
   fetchUserMatches: {},
   matches: {}
 };
 
 MatchesPage.propTypes = {
-  authentication: PropTypes.shape({
-    payload: PropTypes.shape({
-      token: PropTypes.string
-    })
-  }),
   fetchUserMatches: PropTypes.func,
   matches: PropTypes.shape({
     payload: PropTypes.shape({
-      token: PropTypes.string
+      matches: PropTypes.array
     })
   })
 };
@@ -200,10 +209,7 @@ MatchesPage.propTypes = {
  * @param state
  * @returns {{}}
  */
-const mapStateToProps = ({ authentication, matches }) => ({
-  authentication,
-  matches
-});
+const mapStateToProps = ({ matches }) => ({ matches });
 
 /**
  * @param dispatch

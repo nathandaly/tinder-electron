@@ -1,6 +1,8 @@
-import 'whatwg-fetch';
-
-import { USER_MATCHES_STARTED } from '../constants/ActionTypes';
+import {
+  USER_MATCHES_STARTED,
+  USER_MATCHES_FINISHED
+} from '../constants/ActionTypes';
+import axios from '../utils/axiosInstance';
 
 /**
  * Do not use hasError callback if you are using
@@ -10,13 +12,9 @@ import { USER_MATCHES_STARTED } from '../constants/ActionTypes';
  * @return {function(*)}
  */
 export default (id = null, hasError) => dispatch => {
-  const token = localStorage.getItem('auth-token');
-
-  if (token === null) {
-    hasError(true);
-    return;
-  }
-
+  axios.defaults.headers.common['X-Auth-Token'] = localStorage.getItem(
+    'auth-token'
+  );
   dispatch({ type: USER_MATCHES_STARTED });
 
   let endpoint = '/updates';
@@ -25,74 +23,37 @@ export default (id = null, hasError) => dispatch => {
     endpoint = `/user/matches/${id}`;
   }
 
-  fetch(`https://api.gotinder.com${endpoint}`, {
-    method: 'POST',
-    body: JSON.stringify({
+  axios
+    .post(endpoint, {
       last_activity_date: ''
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': 'Tinder/9.2.0 (iPhone; iOS 11.4; Scale/3.00)',
-      'X-Auth-Token': token
-    },
-    credentials: 'same-origin'
-  })
-    .then(
-      response => {
-        console.log(response);
-        return response;
-      },
-      error => {
-        console.log(error);
-      }
-    )
-    .catch(error => {
-      console.log(error);
-    });
+    })
+    .then(response => {
+      dispatch({
+        type: USER_MATCHES_FINISHED,
+        payload: response.data,
+        error: false,
+        meta: response.meta
+      });
 
-  // request({
-  //     url: 'https://api.gotinder.com/updates',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'User-Agent': 'Tinder/9.2.0 (iPhone; iOS 11.4; Scale/3.00)',
-  //       'X-Auth-Token': token
-  //     },
-  //     body: JSON.stringify({
-  //       'last_activity_date': ''
-  //     })
-  //   },
-  //   (error, httpResponse, body) => {
-  //     console.log([error, httpResponse, body]);
-  //     const bodyObject = JSON.parse(body);
-  //
-  //     if (error !== null || httpResponse.statusCode !== 200) {
-  //       if (bodyObject.error) {
-  //         dispatch({
-  //           type: USER_MATCHES_FINISHED,
-  //           payload: bodyObject.error,
-  //           error: true
-  //         });
-  //       } else {
-  //         dispatch({
-  //           type: USER_MATCHES_FINISHED,
-  //           payload: ['Failed to fetch user matches.'],
-  //           error: true
-  //         });
-  //       }
-  //
-  //       hasError(true);
-  //
-  //       return;
-  //     }
-  //
-  //     dispatch({
-  //       type: USER_MATCHES_FINISHED,
-  //       payload: bodyObject,
-  //       error: false,
-  //       meta: {}
-  //     });
-  //
-  //     hasError(false);
-  //   }
-  // );
+      hasError(false);
+
+      return response;
+    })
+    .catch(error => {
+      if (error.response) {
+        dispatch({
+          type: USER_MATCHES_FINISHED,
+          payload: error.response.data.errors,
+          error: true
+        });
+      } else {
+        dispatch({
+          type: USER_MATCHES_FINISHED,
+          payload: ['Failed to authenticate.'],
+          error: true
+        });
+      }
+
+      hasError(true);
+    });
 };

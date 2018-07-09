@@ -17,10 +17,10 @@ export default (tokenData, hasError) => dispatch => {
   dispatch({ type: AUTHENTICATION_STARTED });
 
   axios
-    .post('/auth', {
-      data: tokenData
-    })
+    .post('/auth', tokenData)
     .then(response => {
+      localStorage.setItem('auth-token', response.data.token);
+
       dispatch({
         type: AUTHENTICATION_FINISHED,
         payload: response.data,
@@ -33,6 +33,7 @@ export default (tokenData, hasError) => dispatch => {
       return response;
     })
     .catch(error => {
+      console.log(error.response);
       if (error.response) {
         dispatch({
           type: AUTHENTICATION_FINISHED,
